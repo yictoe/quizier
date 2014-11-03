@@ -42,4 +42,7 @@ func main() {
 	ans.IntAnswers = []*(coreQuiz.IntAnswerUnit){&c1, &c2}
 	ans.StrAnswers = []*(coreQuiz.StrAnswerUnit){&d1, &d2}
 	fmt.Printf("%f", ans.Score(quiz))
+
+	quiz.SaveFile("test.quiz")
+	ans.SaveFile("test.ans")
 }

@@ -1,6 +1,9 @@
 package coreQuiz
 
 import (
+	"bufio"
+	"encoding/json"
+	"os"
 	"strings"
 )
 
@@ -52,6 +55,14 @@ type Answer struct {
 	StrAnswers []*StrAnswerUnit
 }
 
+type bytes [][]byte
+
+func Check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+
 func (ans Answer) Score(quizier Quiz) float32 {
 	var sc float32 = 0
 	for _, i := range ans.IntAnswers {
@@ -84,4 +95,44 @@ func (quizier Quiz) TotalScore() float32 {
 		sc = sc + (*i).Score
 	}
 	return sc
+}
+
+func (data bytes) SaveFile(Addr string) {
+	f, err := os.Create(Addr)
+	w := bufio.NewWriter(f)
+	Check(err)
+	defer f.Close()
+	for _, i := range data {
+		_, err = w.Write(i)
+		w.Flush()
+		Check(err)
+	}
+}
+
+func (quizier Quiz) SaveFile(Addr string) {
+	var data bytes
+	for _, i := range quizier.SelectQuiz {
+		temp, _ := json.Marshal(i)
+		data = append(data, temp)
+	}
+	for _, i := range quizier.TypeQuiz {
+		temp, err := json.Marshal(i)
+		Check(err)
+		data = append(data, temp)
+	}
+	data.SaveFile(Addr)
+}
+
+func (ans Answer) SaveFile(Addr string) {
+	var data bytes
+	for _, i := range ans.IntAnswers {
+		temp, _ := json.Marshal(i)
+		data = append(data, temp)
+	}
+	for _, i := range ans.StrAnswers {
+		temp, err := json.Marshal(i)
+		Check(err)
+		data = append(data, temp)
+	}
+	data.SaveFile(Addr)
 }
