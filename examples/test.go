@@ -41,8 +41,12 @@ func main() {
 	d2.Answer = "CcCcC"
 	ans.IntAnswers = []*(coreQuiz.IntAnswerUnit){&c1, &c2}
 	ans.StrAnswers = []*(coreQuiz.StrAnswerUnit){&d1, &d2}
-	fmt.Printf("%f", ans.Score(quiz))
+	fmt.Printf("Quiz Score: %f\n", ans.Score(quiz))
 
 	quiz.SaveFile("test.quiz")
 	ans.SaveFile("test.ans")
+	var quiz2 = coreQuiz.ReadQuiz("test.quiz")
+	fmt.Printf("Quiz No:%d\n", quiz2.SelectQuiz[0].No)
+	var ans2 = coreQuiz.ReadAns("test.ans")
+	fmt.Printf("Answer No:%d, Answer:%d\n ", ans2.IntAnswers[0].No, ans2.IntAnswers[0].Answer)
 }

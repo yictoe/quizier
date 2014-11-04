@@ -3,6 +3,9 @@ package coreQuiz
 import (
 	"bufio"
 	"encoding/json"
+	//"io"
+	//"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -55,7 +58,7 @@ type Answer struct {
 	StrAnswers []*StrAnswerUnit
 }
 
-type bytes [][]byte
+type bytes []byte
 
 func Check(e error) {
 	if e != nil {
@@ -101,38 +104,63 @@ func (data bytes) SaveFile(Addr string) {
 	f, err := os.Create(Addr)
 	w := bufio.NewWriter(f)
 	Check(err)
+	w.Write(data)
+	w.Flush()
 	defer f.Close()
-	for _, i := range data {
-		_, err = w.Write(i)
-		w.Flush()
-		Check(err)
-	}
 }
 
 func (quizier Quiz) SaveFile(Addr string) {
 	var data bytes
-	for _, i := range quizier.SelectQuiz {
-		temp, _ := json.Marshal(i)
-		data = append(data, temp)
-	}
-	for _, i := range quizier.TypeQuiz {
-		temp, err := json.Marshal(i)
-		Check(err)
-		data = append(data, temp)
-	}
+	data, _ = json.Marshal(quizier)
 	data.SaveFile(Addr)
+	return
 }
 
 func (ans Answer) SaveFile(Addr string) {
 	var data bytes
-	for _, i := range ans.IntAnswers {
-		temp, _ := json.Marshal(i)
-		data = append(data, temp)
-	}
-	for _, i := range ans.StrAnswers {
-		temp, err := json.Marshal(i)
-		Check(err)
-		data = append(data, temp)
-	}
+	data, _ = json.Marshal(ans)
 	data.SaveFile(Addr)
+	return
+}
+
+func ReadQuiz(Addr string) *Quiz {
+	reading, err := ioutil.ReadFile(Addr)
+	Check(err)
+	var data map[string][]json.RawMessage
+	var quizier Quiz
+	err = json.Unmarshal(reading, &data)
+	Check(err)
+	for _, i := range data["SelectQuiz"] {
+		var temp SelectQuizUnit
+		err = json.Unmarshal(i, &temp)
+		Check(err)
+		quizier.SelectQuiz = append(quizier.SelectQuiz, &temp)
+	}
+	for _, i := range data["TypeQuiz"] {
+		var temp TypeQuizUnit
+		err = json.Unmarshal(i, &temp)
+		quizier.TypeQuiz = append(quizier.TypeQuiz, &temp)
+	}
+	return &quizier
+}
+
+func ReadAns(Addr string) *Answer {
+	reading, err := ioutil.ReadFile(Addr)
+	Check(err)
+	var data map[string][]json.RawMessage
+	var ans Answer
+	err = json.Unmarshal(reading, &data)
+	Check(err)
+	for _, i := range data["StrAnswers"] {
+		var temp StrAnswerUnit
+		err = json.Unmarshal(i, &temp)
+		Check(err)
+		ans.StrAnswers = append(ans.StrAnswers, &temp)
+	}
+	for _, i := range data["IntAnswers"] {
+		var temp IntAnswerUnit
+		err = json.Unmarshal(i, &temp)
+		ans.IntAnswers = append(ans.IntAnswers, &temp)
+	}
+	return &ans
 }
