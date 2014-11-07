@@ -49,4 +49,9 @@ func main() {
 	fmt.Printf("Quiz No:%d\n", quiz2.SelectQuiz[0].No)
 	var ans2 = coreQuiz.ReadAns("test.ans")
 	fmt.Printf("Answer No:%d, Answer:%d\n ", ans2.IntAnswers[0].No, ans2.IntAnswers[0].Answer)
+	mark, _ := quiz2.Find(3)
+	fmt.Printf("%d", mark)
+	mark2, adfa := ans2.Find(2)
+	adsss := adfa.(*coreQuiz.StrAnswerUnit)
+	fmt.Printf("%d %s", mark2, adsss.Answer)
 }

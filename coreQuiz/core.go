@@ -164,3 +164,33 @@ func ReadAns(Addr string) *Answer {
 	}
 	return &ans
 }
+
+//selectQuiz:0,typeQuiz:1,err:-1
+func (quizier Quiz) Find(no int) (int, interface{}) {
+	for _, i := range quizier.SelectQuiz {
+		if i.No == no {
+			return 0, i
+		}
+	}
+	for _, i := range quizier.TypeQuiz {
+		if i.No == no {
+			return 1, i
+		}
+	}
+	return -1, nil
+}
+
+//IntAnswer:0, StrAnswer:1,err:-1
+func (ans Answer) Find(no int) (int, interface{}) {
+	for _, i := range ans.IntAnswers {
+		if i.No == no {
+			return 0, i
+		}
+	}
+	for _, i := range ans.StrAnswers {
+		if i.No == no {
+			return 1, i
+		}
+	}
+	return -1, nil
+}
